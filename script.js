@@ -1,4 +1,4 @@
-const BASE_URL= 'https://b2c-api-cdn.deeplol.gg';
+const BASE_URL = 'https://b2c-api-cdn.deeplol.gg';
 
 /*메인 검색 함수*/
 async function searchSummoner() {
@@ -19,7 +19,7 @@ async function searchSummoner() {
         // 이름과 태그 분리
         let name, tag;
         if (summonerName.includes('#')) {
-            [name, tag]= summonerName.split('#');
+            [name, tag] = summonerName.split('#');
         } else {
             name= summonerName;
             tag= 'KR1';
@@ -28,12 +28,10 @@ async function searchSummoner() {
         name= name.trim();
         tag= tag.trim();
 
-        console.log(`🔍 검색 시작: ${name}#${tag}`);
-
-        // 유저 정보 가져오기
+        // 1. 소환사 정보 가져오기
         const summonerInfo= await getSummonerInfo(name, tag);
         if (!summonerInfo) {
-            throw new Error('유저를 찾을 수 없습니다.');
+            throw new Error('소환사를 찾을 수 없습니다.');
         }
 
         const puuId= summonerInfo.puu_id;
@@ -41,17 +39,16 @@ async function searchSummoner() {
             throw new Error('PUU ID를 찾을 수 없습니다.');
         }
 
-        // 매치 리스트 가져오기
-        // 매치
+        // 2. 매치 리스트 가져오기
         const matchIdList= await getMatchIdList(puuId);
         if (!matchIdList || matchIdList.length=== 0) {
             throw new Error('매치 정보를 찾을 수 없습니다.');
         }
 
-        // AI Score 수집 (최근 10게임)
+        // 3. AI Score 수집 (최근 10게임)
         const aiScores= await collectAIScores(matchIdList.slice(0, 10), puuId);
 
-        // 결과 표시
+        // 4. 결과 표시
         displayResults(summonerInfo, aiScores);
 
     } catch (error) {
@@ -82,7 +79,6 @@ async function getSummonerInfo(name, tag) {
 /*매치 ID 리스트 가져오기*/
 async function getMatchIdList(puuId) {
     const url= `${BASE_URL}/match/matches?puu_id=${puuId}&platform_id=KR&offset=0&count=20&queue_type=ALL&champion_id=0&only_list=1&last_updated_at=0`;
-
     const response= await fetch(url);
     
     if (!response.ok) {
@@ -98,7 +94,7 @@ async function collectAIScores(matchIdList, puuId) {
     const aiScores= [];
     const total= Math.min(matchIdList.length, 10);
 
-    for (let i= 0; i < total; i++) {
+    for (let i= 0; i< total; i++) {
         const matchId= matchIdList[i].match_id;
 
         try {
@@ -107,7 +103,6 @@ async function collectAIScores(matchIdList, puuId) {
             if (!matchDetail) {
                 continue;
             }
-
             const participantsList= matchDetail.participants_list || [];
 
             for (const participant of participantsList) {
@@ -117,14 +112,14 @@ async function collectAIScores(matchIdList, puuId) {
                     aiScores.push({
                         matchId: matchId,
                         aiScore: laneStats.ai_score || 'N/A',
-//                        champion: getChampionName(participant.champion_id, matchDetail),
-//                        championId: participant.champion_id,
-//                        win: participant.win || false,
-//                        kills: participant.kills || 0,
-//                        deaths: participant.deaths || 0,
-//                        assists: participant.assists || 0,
-//                        position: participant.position || 'N/A',
-//                        tier: `${participant.tier || ''} ${participant.division || ''}`.trim()
+                        //champion: getChampionName(participant.champion_id, matchDetail),
+                        //championId: participant.champion_id,
+                        //win: participant.win || false,
+                        //kills: participant.kills || 0,
+                        //deaths: participant.deaths || 0,
+                        //assists: participant.assists || 0,
+                        //position: participant.position || 'N/A',
+                        //tier: `${participant.tier || ''} ${participant.division || ''}`.trim()
                     });
                     break;
                 }
@@ -133,16 +128,15 @@ async function collectAIScores(matchIdList, puuId) {
             // API 호출 간격 (과도한 요청 방지)
             await sleep(200);
 
-        } catch (error) { }
+        } catch (error) {
+        }
     }
-
     return aiScores;
 }
 
 /*매치 상세 정보 가져오기*/
 async function getMatchDetail(matchId) {
     const url= `${BASE_URL}/match/match-cached?match_id=${matchId}&platform_id=KR`;
-
     const response= await fetch(url);
     
     if (!response.ok) {
@@ -151,6 +145,19 @@ async function getMatchDetail(matchId) {
 
     return await response.json();
 }
+
+/*챔피언 이름 가져오기
+function getChampionName(championId, matchDetail) {
+    const participants= matchDetail.participants_list || [];
+    
+    for (const participant of participants) {
+        if (participant.champion_id=== championId && participant.champion_name) {
+            return participant.champion_name;
+        }
+    }
+
+    return `Champion_${championId}`;
+}*/
 
 /*결과 표시*/
 function displayResults(summonerInfo, aiScores) {
@@ -212,7 +219,7 @@ function displayGamesList(aiScores) {
     const gamesList= document.getElementById('gamesList');
     gamesList.innerHTML= '';
 
-    aiScores.forEach((game, index)=> {
+    aiScores.forEach((game, index) => {
         const gameItem= document.createElement('div');
         gameItem.className= 'game-item';
 
@@ -225,9 +232,9 @@ function displayGamesList(aiScores) {
     });
 }
 
-//========================================
+// ========================================
 // UI 헬퍼 함수들
-//========================================
+// ========================================
 
 function showLoading(show) {
     const loading= document.getElementById('loading');
@@ -240,7 +247,7 @@ function showLoading(show) {
 
 function showError(message) {
     const errorDiv= document.getElementById('error');
-    errorDiv.textContent= message;
+    errorDiv.textContent = message;
     errorDiv.classList.add('active');
 }
 
@@ -257,16 +264,16 @@ function hideResults() {
 }
 
 function disableSearch(disabled) {
-    document.getElementById('searchBtn').disabled= disabled;
-    document.getElementById('summonerName').disabled= disabled;
+    document.getElementById('searchBtn').disabled = disabled;
+    document.getElementById('summonerName').disabled = disabled;
 }
 
 function sleep(ms) {
-    return new Promise(resolve=> setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-//========================================
+// ========================================
 // 초기화
-//========================================
+// ========================================
 
 console.log('고로시 준비 완료');
