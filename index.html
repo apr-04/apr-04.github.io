@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HIKHIK Homuri</title>
+    <title>HIKHIK Homuri </title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <header>
             <h1>HIKHIK Homuri</h1>
+            <p>rank goroshi</p>
         </header>
 
         <div class="search-box">
-            <input type="text" id="summonerInput" placeholder="소환사명">
+            <input type="text" id="summonerInput" placeholder="소환사명 입력 (예: Hide on bush)">
             <button id="searchBtn" onclick="searchSummoner()">검색</button>
         </div>
 
@@ -27,7 +28,7 @@
         <div id="results" class="results" style="display: none;">
             <!-- AI Score Section -->
             <section class="section">
-                <h2>📊 최근 20게임 AI Score</h2>
+                <h2>📊 최근 10게임 AI Score</h2>
                 <div id="aiScores" class="score-grid"></div>
             </section>
 
@@ -35,12 +36,6 @@
             <section class="section">
                 <h2>🏆 최근 3시즌 마감 티어</h2>
                 <div id="seasonTiers" class="tier-list"></div>
-            </section>
-
-            <!-- Top Rate Section -->
-            <section class="section">
-                <h2>📈 최근 3시즌 탑 레이트</h2>
-                <div id="topRates" class="rate-list"></div>
             </section>
         </div>
     </div>

@@ -143,23 +143,36 @@ header p {
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.tier-list, .rate-list {
+.tier-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.tier-item, .rate-item {
+.tier-item {
     background: #f8f9fa;
     padding: 20px;
     border-radius: 10px;
     border-left: 5px solid #667eea;
     font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.tier-item strong, .rate-item strong {
-    color: #667eea;
-    margin-right: 10px;
+.tier-item .season-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    min-width: 80px;
+    text-align: center;
+}
+
+.tier-item .tier-value {
+    color: #333;
+    font-weight: 500;
 }
 
 footer {
