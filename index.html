@@ -3,251 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeepLoL AI Score Checker</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .search-box {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 15px;
-            font-size: 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        button {
-            padding: 15px 40px;
-            font-size: 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            font-weight: bold;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .hint {
-            color: #666;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .loading {
-            text-align: center;
-            color: white;
-            font-size: 18px;
-            margin: 20px 0;
-        }
-
-        .error {
-            background: #ff6b6b;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .results {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .summoner-info {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-        }
-
-        .summoner-header {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .summoner-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .tier-container {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
-
-        .tier-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-        }
-
-        .ai-scores-header {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .average-score {
-            background: #f0f0f0;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .average-score strong {
-            color: #667eea;
-            font-size: 24px;
-        }
-
-        .games-list {
-            display: grid;
-            gap: 15px;
-        }
-
-        .game-card {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid #667eea;
-            transition: transform 0.2s;
-        }
-
-        .game-card:hover {
-            transform: translateX(5px);
-        }
-
-        .game-card.win {
-            border-left-color: #51cf66;
-            background: #f0fff4;
-        }
-
-        .game-card.lose {
-            border-left-color: #ff6b6b;
-            background: #fff5f5;
-        }
-
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .champion-name {
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .ai-score-badge {
-            background: #667eea;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .game-stats {
-            display: flex;
-            gap: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .kda {
-            font-weight: bold;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .input-group {
-                flex-direction: column;
-            }
-
-            button {
-                width: 100%;
-            }
-        }
-    </style>
+    <title>HIKHIK Homuri</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>🎮 DeepLoL AI Score Checker</h1>
+        <h1>HIKHIK Homuri Rank goroshi</h1>
         
         <div class="search-box">
             <div class="input-group">
                 <input 
                     type="text" 
                     id="summonerName" 
-                    placeholder="소환사명#태그 (예: 백도어 박사#KR1)"
+                    placeholder="소환사명#태그"
                     onkeypress="if(event.key === 'Enter') searchSummoner()"
                 >
                 <button onclick="searchSummoner()" id="searchBtn">검색</button>
@@ -255,129 +23,35 @@
             <div class="hint">태그를 입력하지 않으면 자동으로 #KR1이 적용됩니다.</div>
         </div>
 
-        <div id="loading" class="loading" style="display: none;">
-            ⏳ 데이터를 불러오는 중...
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>데이터를 불러오는 중...</p>
         </div>
 
-        <div id="error" class="error" style="display: none;"></div>
+        <div id="error" class="error"></div>
 
-        <div id="results" class="results" style="display: none;">
+        <div id="results" class="results">
             <div class="summoner-info">
                 <div class="summoner-header">
                     <div class="summoner-name" id="summonerNameDisplay"></div>
+                    <div class="summoner-level" id="summonerLevel"></div>
                 </div>
                 <div class="tier-container" id="tierContainer"></div>
             </div>
 
             <div class="ai-scores-section">
                 <div class="ai-scores-header">📊 최근 10게임 AI Score</div>
+                
                 <div class="average-score">
-                    평균 AI Score: <strong id="averageScore">0</strong>
+                    <div class="average-score-label">평균 AI Score</div>
+                    <div class="average-score-value" id="averageScore">0</div>
                 </div>
+                
                 <div class="games-list" id="gamesList"></div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Flask 백엔드 URL (배포 시 변경 필요)
-        const API_URL = 'http://172.27.79.80:5000';
-
-        async function searchSummoner() {
-            const summonerName = document.getElementById('summonerName').value.trim();
-            
-            if (!summonerName) {
-                showError('소환사명을 입력해주세요.');
-                return;
-            }
-
-            // UI 초기화
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('error').style.display = 'none';
-            document.getElementById('results').style.display = 'none';
-            document.getElementById('searchBtn').disabled = true;
-
-            try {
-                const response = await fetch(`${API_URL}/api/search`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ summonerName })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || '오류가 발생했습니다.');
-                }
-
-                displayResults(data);
-
-            } catch (error) {
-                showError(error.message);
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('searchBtn').disabled = false;
-            }
-        }
-
-        function displayResults(data) {
-            // 소환사 이름
-            document.getElementById('summonerNameDisplay').textContent = data.summoner_name;
-
-            // 티어 정보
-            const tierContainer = document.getElementById('tierContainer');
-            tierContainer.innerHTML = '';
-            
-            data.tier_info.forEach(tier => {
-                const tierBadge = document.createElement('div');
-                tierBadge.className = 'tier-badge';
-                const queueType = tier.queue_type === 'RANKED_SOLO_5x5' ? '솔로랭크' : 
-                                 tier.queue_type === 'RANKED_FLEX_SR' ? '자유랭크' : tier.queue_type;
-                tierBadge.textContent = `${queueType}: ${tier.tier} ${tier.division} ${tier.lp}LP`;
-                tierContainer.appendChild(tierBadge);
-            });
-
-            // 평균 AI Score
-            document.getElementById('averageScore').textContent = 
-                data.average_ai_score.toFixed(2);
-
-            // 게임 리스트
-            const gamesList = document.getElementById('gamesList');
-            gamesList.innerHTML = '';
-
-            data.ai_scores.forEach((game, index) => {
-                const gameCard = document.createElement('div');
-                gameCard.className = `game-card ${game.win ? 'win' : 'lose'}`;
-
-                gameCard.innerHTML = `
-                    <div class="game-header">
-                        <div>
-                            <span style="color: ${game.win ? '#51cf66' : '#ff6b6b'}; font-weight: bold; margin-right: 10px;">
-                                ${game.win ? '승리' : '패배'}
-                            </span>
-                            <span class="champion-name">${game.champion}</span>
-                        </div>
-                        <div class="ai-score-badge">AI: ${game.ai_score}</div>
-                    </div>
-                    <div class="game-stats">
-                        <span class="kda">${game.kills}/${game.deaths}/${game.assists}</span>
-                        <span>KDA: ${((game.kills + game.assists) / Math.max(game.deaths, 1)).toFixed(2)}</span>
-                    </div>
-                `;
-
-                gamesList.appendChild(gameCard);
-            });
-
-            document.getElementById('results').style.display = 'block';
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-        }
-    </script>
+    <script src="/app.js"></script>
 </body>
 </html>

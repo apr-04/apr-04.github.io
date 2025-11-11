@@ -1,37 +1,15 @@
-// API URL 설정
-// const API_URL = 'http://localhost:5000/api/summoner';  // 로컬 테스트
-const API_URL = 'http://172.27.79.80:5000/api/summoner';
+/**
+ * DeepLoL AI Score Checker
+ * GitHub Pages용 프론트엔드 전용 버전
+ */
 
-// API 연결 테스트
-async function testConnection() {
-    try {
-        const response = await fetch(`${API_URL}/api/health`);
-        if (response.ok) {
-            console.log('✅ 백엔드 연결 성공');
-            return true;
-        }
-    } catch (error) {
-        console.error('❌ 백엔드 연결 실패:', error);
-        return false;
-    }
-}
+const BASE_URL = 'https://b2c-api-cdn.deeplol.gg';
 
-// 페이지 로드 시 연결 테스트
-window.addEventListener('load', async () => {
-    const connected = await testConnection();
-    if (!connected) {
-        showError('백엔드 서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인해주세요.');
-    }
-});
-
-function handleKeyPress(event) {
-    if (event.key === 'Enter') {
-        searchSummoner();
-    }
-}
-
+/**
+ * 메인 검색 함수
+ */
 async function searchSummoner() {
-    const summonerName = document.getElementById('summonerInput').value.trim();
+    const summonerName = document.getElementById('summonerName').value.trim();
     
     if (!summonerName) {
         showError('소환사명을 입력해주세요.');
@@ -39,116 +17,339 @@ async function searchSummoner() {
     }
 
     // UI 초기화
+    showLoading(true);
     hideError();
     hideResults();
-    showLoading();
+    disableSearch(true);
 
     try {
-        console.log('검색 시작:', summonerName);
-        
-        const response = await fetch(`${API_URL}/api/summoner/${encodeURIComponent(summonerName)}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        console.log('응답 상태:', response.status);
-        console.log('응답 헤더:', response.headers.get('content-type'));
-
-        // Content-Type 확인
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            const text = await response.text();
-            console.error('JSON이 아닌 응답:', text.substring(0, 200));
-            throw new Error('서버가 올바른 응답을 반환하지 않았습니다. 백엔드를 확인해주세요.');
+        // 이름과 태그 분리
+        let name, tag;
+        if (summonerName.includes('#')) {
+            [name, tag] = summonerName.split('#');
+        } else {
+            name = summonerName;
+            tag = 'KR1';
         }
 
-        const data = await response.json();
-        console.log('응답 데이터:', data);
+        name = name.trim();
+        tag = tag.trim();
 
-        hideLoading();
+        console.log(`🔍 검색 시작: ${name}#${tag}`);
 
-        if (!response.ok || !data.success) {
-            throw new Error(data.error || '데이터를 가져오는데 실패했습니다.');
+        // 1. 소환사 정보 가져오기
+        const summonerInfo = await getSummonerInfo(name, tag);
+        if (!summonerInfo) {
+            throw new Error('소환사를 찾을 수 없습니다.');
         }
 
-        displayResults(data);
+        const puuId = summonerInfo.puu_id;
+        if (!puuId) {
+            throw new Error('PUU ID를 찾을 수 없습니다.');
+        }
+
+        console.log(`✓ PUU ID: ${puuId}`);
+
+        // 2. 매치 리스트 가져오기
+        const matchIdList = await getMatchIdList(puuId);
+        if (!matchIdList || matchIdList.length === 0) {
+            throw new Error('매치 정보를 찾을 수 없습니다.');
+        }
+
+        console.log(`✓ 매치 수: ${matchIdList.length}`);
+
+        // 3. AI Score 수집 (최근 10게임)
+        const aiScores = await collectAIScores(matchIdList.slice(0, 10), puuId);
+
+        console.log(`✓ AI Score 수집 완료: ${aiScores.length}개`);
+
+        // 4. 결과 표시
+        displayResults(summonerInfo, aiScores);
 
     } catch (error) {
-        console.error('검색 오류:', error);
-        hideLoading();
-        showError(`오류: ${error.message}`);
+        console.error('❌ 에러:', error);
+        showError(error.message);
+    } finally {
+        showLoading(false);
+        disableSearch(false);
     }
 }
 
-function displayResults(data) {
-    // 소환사명 표시
-    document.getElementById('summonerName').textContent = `${data.summoner}님의 통계`;
-
-    // AI Scores 표시
-    const aiScoresContainer = document.getElementById('aiScores');
-    aiScoresContainer.innerHTML = '';
+/**
+ * 소환사 정보 가져오기
+ */
+async function getSummonerInfo(name, tag) {
+    const encodedName = encodeURIComponent(name);
+    const encodedTag = encodeURIComponent(tag);
     
-    if (data.ai_scores && data.ai_scores.length > 0) {
-        data.ai_scores.forEach((score, index) => {
-            const scoreDiv = document.createElement('div');
-            scoreDiv.className = 'score-item';
-            scoreDiv.textContent = score;
-            scoreDiv.title = `게임 ${index + 1}`;
-            aiScoresContainer.appendChild(scoreDiv);
-        });
-    } else {
-        aiScoresContainer.innerHTML = '<p style="color: #999;">AI Score 데이터가 없습니다.</p>';
+    const url = `${BASE_URL}/summoner/summoner?riot_id_name=${encodedName}&riot_id_tag_line=${encodedTag}&platform_id=KR`;
+    
+    console.log('  [API] 소환사 정보 요청');
+
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+        throw new Error(`소환사 조회 실패 (${response.status})`);
     }
 
-    // 티어 & 레이트 표시
-    const tierRateContainer = document.getElementById('tierRate');
-    tierRateContainer.innerHTML = '';
+    const data = await response.json();
+    return data.summoner_basic_info_dict;
+}
+
+/**
+ * 매치 ID 리스트 가져오기
+ */
+async function getMatchIdList(puuId) {
+    const url = `${BASE_URL}/match/matches?puu_id=${puuId}&platform_id=KR&offset=0&count=20&queue_type=ALL&champion_id=0&only_list=1&last_updated_at=0`;
     
-    if (data.tier_rate && data.tier_rate.length > 0) {
-        data.tier_rate.forEach((tier, index) => {
-            const tierDiv = document.createElement('div');
-            tierDiv.className = 'tier-item';
-            tierDiv.textContent = tier;
-            tierRateContainer.appendChild(tierDiv);
-        });
-    } else {
-        tierRateContainer.innerHTML = '<p style="color: #999;">티어 정보가 없습니다.</p>';
+    console.log('  [API] 매치 리스트 요청');
+
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+        throw new Error(`매치 리스트 조회 실패 (${response.status})`);
     }
 
-    // DeepLOL 링크
-    document.getElementById('deeplolLink').href = data.url;
+    const data = await response.json();
+    return data.match_id_list;
+}
 
-    // 결과 표시
+/**
+ * AI Score 수집
+ */
+async function collectAIScores(matchIdList, puuId) {
+    const aiScores = [];
+    const total = Math.min(matchIdList.length, 10);
+
+    console.log(`  [처리] 최근 10게임 AI Score 수집 시작`);
+
+    for (let i = 0; i < total; i++) {
+        const matchId = matchIdList[i].match_id;
+        
+        console.log(`    [${i + 1}/${total}] ${matchId}`);
+
+        try {
+            const matchDetail = await getMatchDetail(matchId);
+            
+            if (!matchDetail) {
+                console.warn(`      ✗ 상세 정보 없음`);
+                continue;
+            }
+
+            const participantsList = matchDetail.participants_list || [];
+
+            for (const participant of participantsList) {
+                if (participant.puu_id === puuId) {
+                    const laneStats = participant.lane_stat_dict || {};
+                    
+                    aiScores.push({
+                        matchId: matchId,
+                        aiScore: laneStats.ai_score || 'N/A',
+                        champion: getChampionName(participant.champion_id, matchDetail),
+                        championId: participant.champion_id,
+                        win: participant.win || false,
+                        kills: participant.kills || 0,
+                        deaths: participant.deaths || 0,
+                        assists: participant.assists || 0,
+                        position: participant.position || 'N/A',
+                        tier: `${participant.tier || ''} ${participant.division || ''}`.trim()
+                    });
+
+                    console.log(`      ✓ AI Score: ${laneStats.ai_score}`);
+                    break;
+                }
+            }
+
+            // API 호출 간격 (과도한 요청 방지)
+            await sleep(200);
+
+        } catch (error) {
+            console.error(`      ✗ 오류:`, error.message);
+        }
+    }
+
+    return aiScores;
+}
+
+/**
+ * 매치 상세 정보 가져오기
+ */
+async function getMatchDetail(matchId) {
+    const url = `${BASE_URL}/match/match-cached?match_id=${matchId}&platform_id=KR`;
+
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+        return null;
+    }
+
+    return await response.json();
+}
+
+/**
+ * 챔피언 이름 가져오기
+ */
+function getChampionName(championId, matchDetail) {
+    const participants = matchDetail.participants_list || [];
+    
+    for (const participant of participants) {
+        if (participant.champion_id === championId && participant.champion_name) {
+            return participant.champion_name;
+        }
+    }
+
+    return `Champion_${championId}`;
+}
+
+/**
+ * 결과 표시
+ */
+function displayResults(summonerInfo, aiScores) {
+    // 소환사 이름
+    document.getElementById('summonerNameDisplay').textContent = 
+        `${summonerInfo.riot_id_name}#${summonerInfo.riot_id_tag_line}`;
+    
+    // 레벨
+    document.getElementById('summonerLevel').textContent = 
+        `Lv. ${summonerInfo.level}`;
+
+    // 티어 정보
+    displayTierInfo(summonerInfo);
+
+    // 평균 AI Score
+    displayAverageScore(aiScores);
+
+    // 게임 리스트
+    displayGamesList(aiScores);
+
     showResults();
 }
 
-function showLoading() {
-    document.getElementById('loading').classList.remove('hidden');
+/**
+ * 티어 정보 표시
+ */
+function displayTierInfo(summonerInfo) {
+    const tierContainer = document.getElementById('tierContainer');
+    tierContainer.innerHTML = '';
+    
+    const previousSeasons = summonerInfo.previous_season_tier_list || [];
+    const sortedSeasons = previousSeasons.sort((a, b) => b.season - a.season);
+    
+    sortedSeasons.slice(0, 3).forEach(season => {
+        const tierBadge = document.createElement('div');
+        tierBadge.className = 'tier-badge';
+        
+        const division = season.division ? ` ${season.division}` : '';
+        const lp = season.lp >= 0 ? ` ${season.lp}LP` : '';
+        
+        tierBadge.textContent = `시즌 ${season.season}: ${season.tier}${division}${lp}`;
+        tierContainer.appendChild(tierBadge);
+    });
 }
 
-function hideLoading() {
-    document.getElementById('loading').classList.add('hidden');
+/**
+ * 평균 AI Score 표시
+ */
+function displayAverageScore(aiScores) {
+    const validScores = aiScores
+        .map(s => s.aiScore)
+        .filter(score => typeof score === 'number');
+    
+    const average = validScores.length > 0 
+        ? (validScores.reduce((a, b) => a + b, 0) / validScores.length).toFixed(2)
+        : 0;
+    
+    document.getElementById('averageScore').textContent = average;
+}
+
+/**
+ * 게임 리스트 표시
+ */
+function displayGamesList(aiScores) {
+    const gamesList = document.getElementById('gamesList');
+    gamesList.innerHTML = '';
+
+    aiScores.forEach((game, index) => {
+        const gameCard = document.createElement('div');
+        gameCard.className = `game-card ${game.win ? 'win' : 'lose'}`;
+
+        const kda = game.deaths > 0 
+            ? ((game.kills + game.assists) / game.deaths).toFixed(2)
+            : 'Perfect';
+
+        gameCard.innerHTML = `
+            <div class="game-header">
+                <div class="game-info">
+                    <div class="game-result ${game.win ? 'win' : 'lose'}">
+                        ${game.win ? '승리' : '패배'}
+                    </div>
+                    <div class="champion-name">${game.champion}</div>
+                    <div class="position-badge">${game.position}</div>
+                </div>
+                <div class="ai-score-badge">${game.aiScore}</div>
+            </div>
+            <div class="game-stats">
+                <div class="stat-item">
+                    <div class="stat-label">KDA</div>
+                    <div class="stat-value kda">${game.kills}/${game.deaths}/${game.assists}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">KDA 비율</div>
+                    <div class="stat-value">${kda}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">티어</div>
+                    <div class="stat-value">${game.tier || 'N/A'}</div>
+                </div>
+            </div>
+        `;
+
+        gamesList.appendChild(gameCard);
+    });
+}
+
+// ========================================
+// UI 헬퍼 함수들
+// ========================================
+
+function showLoading(show) {
+    const loading = document.getElementById('loading');
+    if (show) {
+        loading.classList.add('active');
+    } else {
+        loading.classList.remove('active');
+    }
 }
 
 function showError(message) {
     const errorDiv = document.getElementById('error');
-    errorDiv.textContent = `❌ ${message}`;
-    errorDiv.classList.add('hidden');
-    setTimeout(() => {
-        errorDiv.classList.remove('hidden');
-    }, 10);
+    errorDiv.textContent = message;
+    errorDiv.classList.add('active');
 }
 
 function hideError() {
-    document.getElementById('error').classList.add('hidden');
+    document.getElementById('error').classList.remove('active');
 }
 
 function showResults() {
-    document.getElementById('results').classList.remove('hidden');
+    document.getElementById('results').classList.add('active');
 }
 
 function hideResults() {
-    document.getElementById('results').classList.add('hidden');
+    document.getElementById('results').classList.remove('active');
 }
+
+function disableSearch(disabled) {
+    document.getElementById('searchBtn').disabled = disabled;
+    document.getElementById('summonerName').disabled = disabled;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ========================================
+// 초기화
+// ========================================
+
+console.log('goroshi 준비 완료');
