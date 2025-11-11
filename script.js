@@ -1,5 +1,6 @@
 // 백엔드 API URL (나중에 배포한 서버 주소로 변경)
-const API_URL = 'https://your-backend-url.com/api/summoner';
+//const API_URL = 'https://your-backend-url.com/api/summoner';
+const API_URL= 'http://localhost:5000/api/summoner'
 // 로컬 테스트: 'http://localhost:5000/api/summoner'
 
 async function searchSummoner() {
