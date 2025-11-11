@@ -200,7 +200,7 @@ function displayAverageScore(aiScores) {
 }
 
 /*게임 리스트 표시 (간단 버전) */
-/*function displayGamesList(aiScores) {
+function displayGamesList(aiScores) {
     const gamesList= document.getElementById('gamesList');
     gamesList.innerHTML= '';
 
@@ -215,7 +215,7 @@ function displayAverageScore(aiScores) {
 
         gamesList.appendChild(gameItem);
     });
-}*/
+}
 
 // ========================================
 // UI 헬퍼 함수들
