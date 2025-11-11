@@ -97,7 +97,7 @@ async function collectAIScores(matchIdList, puuId) {
         const matchId= matchIdList[i].match_id;
         
         try {
-            const matchDetail = await getMatchDetail(matchId);
+            const matchDetail= await getMatchDetail(matchId);
             
             if (!matchDetail) {continue;}
 
@@ -199,13 +199,13 @@ function displayAverageScore(aiScores) {
     document.getElementById('averageScore').textContent= average;
 }
 
-/*게임 리스트 표시 (간단 버전 */
-function displayGamesList(aiScores) {
-    const gamesList = document.getElementById('gamesList');
+/*게임 리스트 표시 (간단 버전) */
+/*function displayGamesList(aiScores) {
+    const gamesList= document.getElementById('gamesList');
     gamesList.innerHTML= '';
 
-    aiScores.forEach((game, index) => {
-        const gameItem = document.createElement('div');
+    aiScores.forEach((game, index)=> {
+        const gameItem= document.createElement('div');
         gameItem.className= 'game-item';
 
         gameItem.innerHTML= `
@@ -215,7 +215,7 @@ function displayGamesList(aiScores) {
 
         gamesList.appendChild(gameItem);
     });
-}
+}*/
 
 // ========================================
 // UI 헬퍼 함수들
@@ -232,7 +232,7 @@ function showLoading(show) {
 
 function showError(message) {
     const errorDiv= document.getElementById('error');
-    errorDiv.textContent = message;
+    errorDiv.textContent= message;
     errorDiv.classList.add('active');
 }
 
