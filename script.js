@@ -112,14 +112,6 @@ async function collectAIScores(matchIdList, puuId) {
                     aiScores.push({
                         matchId: matchId,
                         aiScore: laneStats.ai_score || 'N/A',
-                        //champion: getChampionName(participant.champion_id, matchDetail),
-                        //championId: participant.champion_id,
-                        //win: participant.win || false,
-                        //kills: participant.kills || 0,
-                        //deaths: participant.deaths || 0,
-                        //assists: participant.assists || 0,
-                        //position: participant.position || 'N/A',
-                        //tier: `${participant.tier || ''} ${participant.division || ''}`.trim()
                     });
                     break;
                 }
@@ -145,19 +137,6 @@ async function getMatchDetail(matchId) {
 
     return await response.json();
 }
-
-/*챔피언 이름 가져오기
-function getChampionName(championId, matchDetail) {
-    const participants= matchDetail.participants_list || [];
-    
-    for (const participant of participants) {
-        if (participant.champion_id=== championId && participant.champion_name) {
-            return participant.champion_name;
-        }
-    }
-
-    return `Champion_${championId}`;
-}*/
 
 /*결과 표시*/
 function displayResults(summonerInfo, aiScores) {
