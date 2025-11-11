@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HIKHIK Homuri</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>HIKHIK Homuri Rank goroshi</h1>
+        <h1>HIKHIK Homuri rank goroshi</h1>
         
         <div class="search-box">
             <div class="input-group">
@@ -31,6 +31,7 @@
         <div id="error" class="error"></div>
 
         <div id="results" class="results">
+            <!-- 소환사 정보 -->
             <div class="summoner-info">
                 <div class="summoner-header">
                     <div class="summoner-name" id="summonerNameDisplay"></div>
@@ -39,14 +40,14 @@
                 <div class="tier-container" id="tierContainer"></div>
             </div>
 
-            <div class="ai-scores-section">
-                <div class="ai-scores-header">📊 최근 10게임 AI Score</div>
-                
-                <div class="average-score">
-                    <div class="average-score-label">평균 AI Score</div>
-                    <div class="average-score-value" id="averageScore">0</div>
-                </div>
-                
+            <!-- 평균 AI Score (위쪽) -->
+            <div class="average-score">
+                <div class="average-score-label">평균 AI Score</div>
+                <div class="average-score-value" id="averageScore">0</div>
+            </div>
+
+            <!-- 게임별 AI Score 리스트 (아래쪽) -->
+            <div class="games-section">
                 <div class="games-list" id="gamesList"></div>
             </div>
         </div>
