@@ -28,10 +28,12 @@ async function searchSummoner() {
         name= name.trim();
         tag= tag.trim();
 
-        // 소환사 정보 가져오기
+        console.log(`🔍 검색 시작: ${name}#${tag}`);
+
+        // 유저 정보 가져오기
         const summonerInfo= await getSummonerInfo(name, tag);
         if (!summonerInfo) {
-            throw new Error('소환사를 찾을 수 없습니다.');
+            throw new Error('유저를 찾을 수 없습니다.');
         }
 
         const puuId= summonerInfo.puu_id;
@@ -40,6 +42,7 @@ async function searchSummoner() {
         }
 
         // 매치 리스트 가져오기
+        // 매치
         const matchIdList= await getMatchIdList(puuId);
         if (!matchIdList || matchIdList.length=== 0) {
             throw new Error('매치 정보를 찾을 수 없습니다.');
@@ -68,7 +71,9 @@ async function getSummonerInfo(name, tag) {
 
     const response= await fetch(url);
     
-    if (!response.ok) {throw new Error(`소환사 조회 실패 (${response.status})`);}
+    if (!response.ok) {
+        throw new Error(`소환사 조회 실패 (${response.status})`);
+    }
 
     const data= await response.json();
     return data.summoner_basic_info_dict;
@@ -88,18 +93,20 @@ async function getMatchIdList(puuId) {
     return data.match_id_list;
 }
 
-/* AI Score 수집 */
+/*AI Score 수집*/
 async function collectAIScores(matchIdList, puuId) {
     const aiScores= [];
     const total= Math.min(matchIdList.length, 10);
 
-    for (let i= 0; i< total; i++) {
+    for (let i= 0; i < total; i++) {
         const matchId= matchIdList[i].match_id;
-        
+
         try {
             const matchDetail= await getMatchDetail(matchId);
             
-            if (!matchDetail) {continue;}
+            if (!matchDetail) {
+                continue;
+            }
 
             const participantsList= matchDetail.participants_list || [];
 
@@ -126,25 +133,26 @@ async function collectAIScores(matchIdList, puuId) {
             // API 호출 간격 (과도한 요청 방지)
             await sleep(200);
 
-        } catch (error) {
-            console.error(`      ✗ 오류:`, error.message);
-        }
+        } catch (error) { }
     }
 
     return aiScores;
 }
 
-/* 매치 상세 정보 가져오기*/
+/*매치 상세 정보 가져오기*/
 async function getMatchDetail(matchId) {
     const url= `${BASE_URL}/match/match-cached?match_id=${matchId}&platform_id=KR`;
 
     const response= await fetch(url);
     
-    if (!response.ok) { return null; }
+    if (!response.ok) {
+        return null;
+    }
+
     return await response.json();
 }
 
-/* 결과 표시 */
+/*결과 표시*/
 function displayResults(summonerInfo, aiScores) {
     // 소환사 이름
     document.getElementById('summonerNameDisplay').textContent= 
@@ -166,7 +174,7 @@ function displayResults(summonerInfo, aiScores) {
     showResults();
 }
 
-/* 티어 정보 표시 */
+/*티어 정보 표시*/
 function displayTierInfo(summonerInfo) {
     const tierContainer= document.getElementById('tierContainer');
     tierContainer.innerHTML= '';
@@ -186,7 +194,7 @@ function displayTierInfo(summonerInfo) {
     });
 }
 
-/* 평균 AI Score 표시 */
+/*평균 AI Score 표시*/
 function displayAverageScore(aiScores) {
     const validScores= aiScores
         .map(s=> s.aiScore)
@@ -199,7 +207,7 @@ function displayAverageScore(aiScores) {
     document.getElementById('averageScore').textContent= average;
 }
 
-/*게임 리스트 표시 (간단 버전) */
+/*게임 리스트 표시 (간단 버전)*/
 function displayGamesList(aiScores) {
     const gamesList= document.getElementById('gamesList');
     gamesList.innerHTML= '';
@@ -217,9 +225,9 @@ function displayGamesList(aiScores) {
     });
 }
 
-// ========================================
+//========================================
 // UI 헬퍼 함수들
-// ========================================
+//========================================
 
 function showLoading(show) {
     const loading= document.getElementById('loading');
@@ -257,8 +265,8 @@ function sleep(ms) {
     return new Promise(resolve=> setTimeout(resolve, ms));
 }
 
-// ========================================
+//========================================
 // 초기화
-// ========================================
+//========================================
 
 console.log('고로시 준비 완료');
