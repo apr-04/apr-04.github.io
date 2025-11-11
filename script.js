@@ -2,6 +2,28 @@
 // const API_URL = 'http://localhost:5000/api/summoner';  // 로컬 테스트
 const API_URL = 'http://172.27.79.80:5000/api/summoner';
 
+// API 연결 테스트
+async function testConnection() {
+    try {
+        const response = await fetch(`${API_URL}/api/health`);
+        if (response.ok) {
+            console.log('✅ 백엔드 연결 성공');
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ 백엔드 연결 실패:', error);
+        return false;
+    }
+}
+
+// 페이지 로드 시 연결 테스트
+window.addEventListener('load', async () => {
+    const connected = await testConnection();
+    if (!connected) {
+        showError('백엔드 서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인해주세요.');
+    }
+});
+
 function handleKeyPress(event) {
     if (event.key === 'Enter') {
         searchSummoner();
@@ -22,8 +44,28 @@ async function searchSummoner() {
     showLoading();
 
     try {
-        const response = await fetch(`${API_URL}/api/summoner/${encodeURIComponent(summonerName)}`);
+        console.log('검색 시작:', summonerName);
+        
+        const response = await fetch(`${API_URL}/api/summoner/${encodeURIComponent(summonerName)}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        console.log('응답 상태:', response.status);
+        console.log('응답 헤더:', response.headers.get('content-type'));
+
+        // Content-Type 확인
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            const text = await response.text();
+            console.error('JSON이 아닌 응답:', text.substring(0, 200));
+            throw new Error('서버가 올바른 응답을 반환하지 않았습니다. 백엔드를 확인해주세요.');
+        }
+
         const data = await response.json();
+        console.log('응답 데이터:', data);
 
         hideLoading();
 
@@ -34,8 +76,9 @@ async function searchSummoner() {
         displayResults(data);
 
     } catch (error) {
+        console.error('검색 오류:', error);
         hideLoading();
-        showError(error.message);
+        showError(`오류: ${error.message}`);
     }
 }
 
@@ -92,7 +135,10 @@ function hideLoading() {
 function showError(message) {
     const errorDiv = document.getElementById('error');
     errorDiv.textContent = `❌ ${message}`;
-    errorDiv.classList.remove('hidden');
+    errorDiv.classList.add('hidden');
+    setTimeout(() => {
+        errorDiv.classList.remove('hidden');
+    }, 10);
 }
 
 function hideError() {
