@@ -117,14 +117,14 @@ async function collectAIScores(matchIdList, puuId) {
                     aiScores.push({
                         matchId: matchId,
                         aiScore: laneStats.ai_score || 'N/A',
-                        champion: getChampionName(participant.champion_id, matchDetail),
-                        championId: participant.champion_id,
-                        win: participant.win || false,
-                        kills: participant.kills || 0,
-                        deaths: participant.deaths || 0,
-                        assists: participant.assists || 0,
-                        position: participant.position || 'N/A',
-                        tier: `${participant.tier || ''} ${participant.division || ''}`.trim()
+//                        champion: getChampionName(participant.champion_id, matchDetail),
+//                        championId: participant.champion_id,
+//                        win: participant.win || false,
+//                        kills: participant.kills || 0,
+//                        deaths: participant.deaths || 0,
+//                        assists: participant.assists || 0,
+//                        position: participant.position || 'N/A',
+//                        tier: `${participant.tier || ''} ${participant.division || ''}`.trim()
                     });
                     break;
                 }
@@ -207,7 +207,7 @@ function displayAverageScore(aiScores) {
     document.getElementById('averageScore').textContent= average;
 }
 
-/*게임 리스트 표시 (간단 버전)*/
+/*게임 리스트 표시*/
 function displayGamesList(aiScores) {
     const gamesList= document.getElementById('gamesList');
     gamesList.innerHTML= '';
