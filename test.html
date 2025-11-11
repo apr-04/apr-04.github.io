@@ -1,280 +1,103 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DeepLOL 소환사 검색</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-        }
-
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        input {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        button {
-            padding: 15px 30px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background: #5568d3;
-        }
-
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #667eea;
-            font-size: 18px;
-        }
-
-        .error {
-            background: #fee;
-            border: 2px solid #fcc;
-            padding: 15px;
-            border-radius: 10px;
-            color: #c33;
-            margin-bottom: 20px;
-        }
-
-        .results {
-            margin-top: 30px;
-        }
-
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section h2 {
-            color: #667eea;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eee;
-        }
-
-        .score-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-        }
-
-        .score-item {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .tier-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .tier-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-            font-size: 16px;
-        }
-
-        .empty {
-            text-align: center;
-            color: #999;
-            padding: 20px;
-            font-style: italic;
-        }
-
-        .summoner-info {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 1.5em;
-        }
-    </style>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>DeepLOL 검색 도구</title>
+	<style>
+		body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 24px; color: #111; }
+		.container { max-width: 880px; margin: 0 auto; }
+		label { display: block; font-weight: 600; margin: 12px 0 4px; }
+		input, select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; }
+		button { margin-top: 16px; padding: 10px 14px; background: #111; color: #fff; border: none; border-radius: 8px; cursor: pointer; }
+		button:disabled { opacity: 0.5; cursor: not-allowed; }
+		section { margin-top: 28px; }
+		.card { border: 1px solid #eee; border-radius: 12px; padding: 16px; margin-top: 12px; }
+		ul { margin: 8px 0 0; padding-left: 20px; }
+		.footer { margin-top: 40px; color: #666; font-size: 12px; }
+	</style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎮 DeepLOL 소환사 검색</h1>
-        
-        <div class="search-box">
-            <input 
-                type="text" 
-                id="summonerInput" 
-                placeholder="소환사명을 입력하세요"
-                onkeypress="handleEnter(event)"
-            />
-            <button onclick="searchSummoner()" id="searchBtn">검색</button>
-        </div>
+	<div class="container">
+		<h2>DeepLOL.gg 검색</h2>
+		<p>https://www.deeplol.gg/summoner/kr/{소환사명} 페이지에서 최근 10게임 AI Score와 마감 티어/레이트를 가져옵니다.</p>
 
-        <div id="errorMsg" class="error" style="display: none;"></div>
-        <div id="loading" class="loading" style="display: none;">
-            ⏳ 데이터를 불러오는 중...
-        </div>
+		<label for="backend">Backend URL (예: http://localhost:5000)</label>
+		<input id="backend" placeholder="http://172.27.79.80:5000/" />
 
-        <div id="results" class="results" style="display: none;">
-            <div class="summoner-info" id="summonerInfo"></div>
+		<label for="region">Region</label>
+		<select id="region">
+			<option value="kr" selected>kr</option>
+		</select>
 
-            <div class="section">
-                <h2>📊 최근 10게임 AI Score</h2>
-                <div id="aiScores" class="score-grid"></div>
-            </div>
+		<label for="summoner">소환사명</label>
+		<input id="summoner" placeholder="소환사명을 입력하세요" />
 
-            <div class="section">
-                <h2>🏆 마감 티어 & 레이트</h2>
-                <div id="tiers" class="tier-list"></div>
-            </div>
-        </div>
-    </div>
+		<button id="fetchBtn">검색 및 가져오기</button>
 
-    <script>
-        // Flask 백엔드 URL (실제 배포된 주소로 변경 필요)
-        const API_URL = 'http://172.27.79.80:5000/api/summoner';
+		<section class="card">
+			<h3>최근 10게임 AI Score</h3>
+			<div id="aiScores">-</div>
+		</section>
 
-        function handleEnter(event) {
-            if (event.key === 'Enter') {
-                searchSummoner();
-            }
-        }
+		<section class="card">
+			<h3>마감 티어/레이트 (최대 3개)</h3>
+			<div id="endTier">-</div>
+		</section>
 
-        async function searchSummoner() {
-            const summonerName = document.getElementById('summonerInput').value.trim();
-            
-            if (!summonerName) {
-                showError('소환사명을 입력해주세요');
-                return;
-            }
+		<div class="footer">프론트는 GitHub Pages에서 정적 호스팅 가능합니다. 백엔드는 Flask로 별도 서버에서 실행하세요.</div>
+	</div>
 
-            // UI 초기화
-            hideError();
-            document.getElementById('results').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('searchBtn').disabled = true;
+	<script>
+		const $ = (id) => document.getElementById(id);
+		const btn = $("fetchBtn");
+		const renderList = (container, items) => {
+			if (!items || items.length === 0) {
+				container.textContent = "데이터 없음";
+				return;
+			}
+			const ul = document.createElement("ul");
+			items.forEach((v) => {
+				const li = document.createElement("li");
+				li.textContent = typeof v === "string" ? v : (v.text || JSON.stringify(v));
+				ul.appendChild(li);
+			});
+			container.innerHTML = "";
+			container.appendChild(ul);
+		};
 
-            try {
-                const response = await fetch(`${API_URL}/api/summoner?name=${encodeURIComponent(summonerName)}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    displayResults(data);
-                } else {
-                    showError(data.error || '데이터를 불러오는데 실패했습니다');
-                }
-            } catch (error) {
-                showError('서버 연결에 실패했습니다: ' + error.message);
-            } finally {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('searchBtn').disabled = false;
-            }
-        }
-
-        function displayResults(data) {
-            // 소환사 정보
-            document.getElementById('summonerInfo').textContent = `${data.summoner}`;
-
-            // AI Scores
-            const scoresContainer = document.getElementById('aiScores');
-            scoresContainer.innerHTML = '';
-            
-            if (data.ai_scores && data.ai_scores.length > 0) {
-                data.ai_scores.forEach((score, index) => {
-                    const scoreDiv = document.createElement('div');
-                    scoreDiv.className = 'score-item';
-                    scoreDiv.textContent = score;
-                    scoreDiv.title = `게임 ${index + 1}`;
-                    scoresContainer.appendChild(scoreDiv);
-                });
-            } else {
-                scoresContainer.innerHTML = '<div class="empty">AI Score 데이터가 없습니다</div>';
-            }
-
-            // 티어
-            const tiersContainer = document.getElementById('tiers');
-            tiersContainer.innerHTML = '';
-            
-            if (data.tiers && data.tiers.length > 0) {
-                data.tiers.forEach((tier, index) => {
-                    const tierDiv = document.createElement('div');
-                    tierDiv.className = 'tier-item';
-                    tierDiv.textContent = tier;
-                    tiersContainer.appendChild(tierDiv);
-                });
-            } else {
-                tiersContainer.innerHTML = '<div class="empty">티어 데이터가 없습니다</div>';
-            }
-
-            document.getElementById('results').style.display = 'block';
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('errorMsg');
-            errorDiv.textContent = '⚠️ ' + message;
-            errorDiv.style.display = 'block';
-        }
-
-        function hideError() {
-            document.getElementById('errorMsg').style.display = 'none';
-        }
-    </script>
+		btn.addEventListener("click", async () => {
+			const backend = $("backend").value.trim();
+			const region = $("region").value.trim() || "kr";
+			const summoner = $("summoner").value.trim();
+			if (!backend) { alert("Backend URL을 입력하세요."); return; }
+			if (!summoner) { alert("소환사명을 입력하세요."); return; }
+			btn.disabled = true;
+			try {
+				const aiUrl = `${backend}/api/ai-scores?region=${encodeURIComponent(region)}&summoner=${encodeURIComponent(summoner)}`;
+				const endUrl = `${backend}/api/end-tier?region=${encodeURIComponent(region)}&summoner=${encodeURIComponent(summoner)}&limit=3`;
+				const [aiRes, endRes] = await Promise.all([fetch(aiUrl), fetch(endUrl)]);
+				const aiJson = await aiRes.json();
+				const endJson = await endRes.json();
+				if (aiJson.error) {
+					$("aiScores").textContent = `오류: ${aiJson.error}`;
+				} else {
+					renderList($("aiScores"), aiJson.scores);
+				}
+				if (endJson.error) {
+					$("endTier").textContent = `오류: ${endJson.error}`;
+				} else {
+					renderList($("endTier"), endJson.items);
+				}
+			} catch (e) {
+				$("aiScores").textContent = "요청 실패";
+				$("endTier").textContent = "요청 실패";
+			} finally {
+				btn.disabled = false;
+			}
+		});
+	</script>
 </body>
 </html>
+
+
