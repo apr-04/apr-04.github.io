@@ -5,14 +5,14 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px;
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 800px;
     margin: 0 auto;
     background: white;
     border-radius: 20px;
@@ -20,20 +20,11 @@ body {
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
 }
 
-header {
+h1 {
     text-align: center;
-    margin-bottom: 40px;
-}
-
-header h1 {
-    font-size: 2.5em;
     color: #333;
-    margin-bottom: 10px;
-}
-
-header p {
-    color: #666;
-    font-size: 1.1em;
+    margin-bottom: 30px;
+    font-size: 2.5em;
 }
 
 .search-box {
@@ -42,7 +33,7 @@ header p {
     margin-bottom: 30px;
 }
 
-#summonerInput {
+input {
     flex: 1;
     padding: 15px 20px;
     font-size: 16px;
@@ -51,30 +42,25 @@ header p {
     transition: border 0.3s;
 }
 
-#summonerInput:focus {
+input:focus {
     outline: none;
     border-color: #667eea;
 }
 
-#searchBtn {
-    padding: 15px 40px;
+button {
+    padding: 15px 30px;
     font-size: 16px;
-    font-weight: bold;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: background 0.3s;
+    font-weight: bold;
 }
 
-#searchBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-}
-
-#searchBtn:active {
-    transform: translateY(0);
+button:hover {
+    background: #5568d3;
 }
 
 .loading {
@@ -98,12 +84,16 @@ header p {
 }
 
 .error {
-    background: #ffe6e6;
-    color: #d63031;
+    background: #fee;
+    border: 2px solid #fcc;
+    color: #c33;
     padding: 20px;
     border-radius: 10px;
-    border-left: 4px solid #d63031;
-    margin-bottom: 20px;
+    margin: 20px 0;
+}
+
+.hidden {
+    display: none;
 }
 
 .results {
@@ -115,20 +105,26 @@ header p {
     to { opacity: 1; transform: translateY(0); }
 }
 
+#summonerName {
+    color: #667eea;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
 .section {
-    margin-bottom: 40px;
+    margin: 30px 0;
 }
 
-.section h2 {
-    color: #333;
-    margin-bottom: 20px;
+.section h3 {
+    color: #555;
+    margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 3px solid #667eea;
+    border-bottom: 2px solid #eee;
 }
 
-.score-grid {
+.ai-scores {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     gap: 10px;
 }
 
@@ -138,12 +134,12 @@ header p {
     padding: 15px;
     border-radius: 10px;
     text-align: center;
+    font-size: 24px;
     font-weight: bold;
-    font-size: 1.2em;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.tier-list {
+.tier-rate {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -151,51 +147,40 @@ header p {
 
 .tier-item {
     background: #f8f9fa;
-    padding: 20px;
+    padding: 15px 20px;
     border-radius: 10px;
-    border-left: 5px solid #667eea;
-    font-size: 1.1em;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.tier-item .season-number {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    min-width: 80px;
-    text-align: center;
-}
-
-.tier-item .tier-value {
-    color: #333;
+    border-left: 4px solid #667eea;
+    font-size: 18px;
     font-weight: 500;
 }
 
-footer {
+.link-button {
+    display: block;
     text-align: center;
+    background: #764ba2;
     color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-decoration: none;
     margin-top: 30px;
-    font-size: 0.9em;
+    font-weight: bold;
+    transition: background 0.3s;
 }
 
-@media (max-width: 768px) {
+.link-button:hover {
+    background: #653a8a;
+}
+
+@media (max-width: 600px) {
     .container {
         padding: 20px;
     }
     
-    header h1 {
+    h1 {
         font-size: 1.8em;
     }
     
     .search-box {
         flex-direction: column;
-    }
-    
-    .score-grid {
-        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
     }
 }
