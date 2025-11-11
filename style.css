@@ -211,116 +211,39 @@ button:disabled {
     font-weight: bold;
 }
 
-/* 게임 리스트 */
+/* 게임 리스트 - 간단 버전 */
 .games-list {
-    display: grid;
-    gap: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.game-card {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    border-left: 5px solid #667eea;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.game-card:hover {
-    transform: translateX(5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.game-card.win {
-    border-left-color: #51cf66;
-    background: linear-gradient(to right, #f0fff4, #f8f9fa);
-}
-
-.game-card.lose {
-    border-left-color: #ff6b6b;
-    background: linear-gradient(to right, #fff5f5, #f8f9fa);
-}
-
-.game-header {
+.game-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    transition: all 0.2s;
 }
 
-.game-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.game-result {
-    font-weight: bold;
-    font-size: 16px;
-    padding: 5px 15px;
-    border-radius: 5px;
-}
-
-.game-result.win {
-    background: #51cf66;
-    color: white;
-}
-
-.game-result.lose {
-    background: #ff6b6b;
-    color: white;
-}
-
-.champion-name {
-    font-weight: bold;
-    font-size: 18px;
-    color: #333;
-}
-
-.position-badge {
+.game-item:hover {
     background: #e9ecef;
-    padding: 3px 10px;
-    border-radius: 5px;
-    font-size: 12px;
+    transform: translateX(5px);
+}
+
+.game-number {
+    font-weight: 600;
     color: #495057;
-}
-
-.ai-score-badge {
-    background: #667eea;
-    color: white;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 20px;
-}
-
-.game-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #dee2e6;
-}
-
-.stat-item {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.stat-label {
-    font-size: 12px;
-    color: #868e96;
-    text-transform: uppercase;
-}
-
-.stat-value {
     font-size: 16px;
-    font-weight: bold;
-    color: #333;
 }
 
-.kda {
+.game-score {
+    font-weight: bold;
     color: #667eea;
+    font-size: 18px;
 }
 
 /* 반응형 디자인 */
@@ -337,12 +260,6 @@ button:disabled {
         width: 100%;
     }
 
-    .game-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
     .average-score-value {
         font-size: 28px;
     }
@@ -354,5 +271,11 @@ button:disabled {
     .summoner-header {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .game-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
     }
 }

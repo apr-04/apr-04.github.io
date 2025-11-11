@@ -263,48 +263,22 @@ function displayAverageScore(aiScores) {
 }
 
 /**
- * 게임 리스트 표시
+ * 게임 리스트 표시 (간단 버전)
  */
 function displayGamesList(aiScores) {
     const gamesList = document.getElementById('gamesList');
     gamesList.innerHTML = '';
 
     aiScores.forEach((game, index) => {
-        const gameCard = document.createElement('div');
-        gameCard.className = `game-card ${game.win ? 'win' : 'lose'}`;
+        const gameItem = document.createElement('div');
+        gameItem.className = 'game-item';
 
-        const kda = game.deaths > 0 
-            ? ((game.kills + game.assists) / game.deaths).toFixed(2)
-            : 'Perfect';
-
-        gameCard.innerHTML = `
-            <div class="game-header">
-                <div class="game-info">
-                    <div class="game-result ${game.win ? 'win' : 'lose'}">
-                        ${game.win ? '승리' : '패배'}
-                    </div>
-                    <div class="champion-name">${game.champion}</div>
-                    <div class="position-badge">${game.position}</div>
-                </div>
-                <div class="ai-score-badge">${game.aiScore}</div>
-            </div>
-            <div class="game-stats">
-                <div class="stat-item">
-                    <div class="stat-label">KDA</div>
-                    <div class="stat-value kda">${game.kills}/${game.deaths}/${game.assists}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">KDA 비율</div>
-                    <div class="stat-value">${kda}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-label">티어</div>
-                    <div class="stat-value">${game.tier || 'N/A'}</div>
-                </div>
-            </div>
+        gameItem.innerHTML = `
+            <span class="game-number">게임 ${index + 1}</span>
+            <span class="game-score">AI Score: ${game.aiScore}</span>
         `;
 
-        gamesList.appendChild(gameCard);
+        gamesList.appendChild(gameItem);
     });
 }
 
@@ -352,4 +326,4 @@ function sleep(ms) {
 // 초기화
 // ========================================
 
-console.log('goroshi 준비 완료');
+console.log('🎮 DeepLoL AI Score Checker 준비 완료');
