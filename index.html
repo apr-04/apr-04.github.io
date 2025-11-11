@@ -4,13 +4,213 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HIKHIK Homuri</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        #summonerInput {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            transition: border 0.3s;
+        }
+
+        #summonerInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        #searchBtn {
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #searchBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #d63031;
+            margin-bottom: 20px;
+        }
+
+        .results {
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+
+        .score-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .tier-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .tier-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .tier-item .season-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .tier-item .tier-value {
+            color: #333;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .score-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>HIKHIK Homuri</h1>
-            <p>RANK goroshi</p>
+            <p>rank goroshi</p>
         </header>
 
         <div class="search-box">
@@ -26,13 +226,11 @@
         <div id="error" class="error" style="display: none;"></div>
 
         <div id="results" class="results" style="display: none;">
-            <!-- AI Score Section -->
             <section class="section">
                 <h2>📊 최근 10게임 AI Score</h2>
                 <div id="aiScores" class="score-grid"></div>
             </section>
 
-            <!-- Season Tier Section -->
             <section class="section">
                 <h2>🏆 최근 3시즌 마감 티어</h2>
                 <div id="seasonTiers" class="tier-list"></div>
@@ -44,7 +242,114 @@
         <p>Made with ❤️ | Data from DeepLOL.gg</p>
     </footer>
 
-    <!-- script.js를 body 맨 끝에 배치 -->
-    <script src="/script.js"></script>
+    <script>
+        const API_URL = 'http://localhost:5000/api/summoner';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchBtn = document.getElementById('searchBtn');
+            const summonerInput = document.getElementById('summonerInput');
+            
+            if (searchBtn) {
+                searchBtn.addEventListener('click', searchSummoner);
+            }
+            
+            if (summonerInput) {
+                summonerInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchSummoner();
+                    }
+                });
+            }
+            
+            checkServerStatus();
+        });
+
+        async function searchSummoner() {
+            const summonerInput = document.getElementById('summonerInput');
+            const summonerName = summonerInput.value.trim();
+            
+            if (!summonerName) {
+                showError('소환사명을 입력해주세요.');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+
+            try {
+                const url = `${API_URL}?name=${encodeURIComponent(summonerName)}`;
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors'
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || '데이터를 불러오는데 실패했습니다.');
+                }
+
+                const data = await response.json();
+                console.log('✅ 받은 데이터:', data);
+                
+                if (data.success === false) {
+                    throw new Error(data.error || '데이터 조회 실패');
+                }
+                
+                displayResults(data);
+                
+            } catch (error) {
+                console.error('❌ 에러:', error);
+                showError(`에러: ${error.message}`);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function displayResults(data) {
+            // AI Scores
+            const aiScoresDiv = document.getElementById('aiScores');
+            if (data.ai_scores && data.ai_scores.length > 0) {
+                aiScoresDiv.innerHTML = data.ai_scores.map((score, index) => 
+                    `<div class="score-item" title="게임 ${index + 1}">${score}</div>`
+                ).join('');
+            } else {
+                aiScoresDiv.innerHTML = '<p>AI Score 데이터가 없습니다.</p>';
+            }
+
+            // Season Tiers - 1, 2, 3으로 표시
+            const seasonTiersDiv = document.getElementById('seasonTiers');
+            if (data.season_tiers && data.season_tiers.length > 0) {
+                seasonTiersDiv.innerHTML = data.season_tiers.map((tier, index) => 
+                    `<div class="tier-item">
+                        <span class="season-number">${index + 1}</span>
+                        <span class="tier-value">${tier}</span>
+                    </div>`
+                ).join('');
+            } else {
+                seasonTiersDiv.innerHTML = '<p>시즌 티어 데이터가 없습니다.</p>';
+            }
+
+            document.getElementById('results').style.display = 'block';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        async function checkServerStatus() {
+            try {
+                const healthUrl = API_URL.replace('/api/summoner', '/health');
+                const response = await fetch(healthUrl);
+                const data = await response.json();
+                console.log('✅ 서버 연결:', data);
+            } catch (error) {
+                console.error('❌ 서버 연결 실패:', error);
+            }
+        }
+    </script>
 </body>
 </html>
