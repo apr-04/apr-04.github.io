@@ -6,7 +6,6 @@
 
 - [기능](#-기능)
 - [시작하기](#-시작하기)
-- [프로젝트 구조](#-프로젝트-구조)
 - [사용법](#-사용법)
 
 ## ✨ 기능
@@ -23,20 +22,6 @@
 ### 필요 사항
 - 웹 브라우저 (Chrome, Firefox, Safari, Edge 등)
 - Git (선택사항)
-
-
-## 프로젝트 구조
-deeplol-checker/
-│
-├── index.html          # 메인 HTML 파일
-│
-├── css/
-│   └── style.css       # 스타일시트
-│
-├── js/
-│   └── app.js          # 메인 JavaScript 로직
-│
-└── README.md           # 프로젝트 문서
 
 
 ## 사용법
